@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>職員ポータル</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#007AFF" />
+
+  <!-- iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="職員ポータル" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+  <style>
+    body{
+      font-family:-apple-system,BlinkMacSystemFont;
+      background:#f2f2f7;
+      margin:0;
+    }
+    #main{ padding:20px; }
+    h1{ text-align:center; margin:0 0 15px 0; }
+    input{
+      width:100%;
+      padding:12px;
+      font-size:16px;
+      border-radius:10px;
+      border:1px solid #ccc;
+      margin-bottom:20px;
+      box-sizing:border-box;
+    }
+    button{
+      display:block;
+      width:100%;
+      padding:16px;
+      margin:6px 0;
+      font-size:17px;
+      border:none;
+      border-radius:10px;
+      background:#007AFF;
+      color:white;
+    }
+    button:active{ background:#005fcc; }
+
+    /* アプリ内ブラウザ */
+    #browser{
+      display:none;
+      position:fixed;
+      top:0; left:0;
+      width:100%; height:100%;
+      background:white;
+    }
+    #toolbar{
+      height:50px;
+      background:#007AFF;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:0 10px;
+      box-sizing:border-box;
+    }
+    #back{
+      background:white;
+      color:#007AFF;
+      border:none;
+      border-radius:6px;
+      padding:6px 10px;
+      font-size:14px;
+    }
+    #openSafari{
+      background:rgba(255,255,255,0.2);
+      color:white;
+      border:none;
+      border-radius:6px;
+      padding:6px 10px;
+      font-size:14px;
+      margin-left:auto;
+    }
+    iframe{
+      width:100%;
+      height:calc(100% - 50px);
+      border:none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="main">
+    <h1>職員ポータル</h1>
+    <input id="search" placeholder="名前検索（よみでもOK）" />
+    <div id="list"></div>
+  </div>
+
+  <div id="browser">
+    <div id="toolbar">
+      <button id="back">← 戻る</button>
+      <button id="openSafari">Safariで開く</button>
+    </div>
+    <iframe id="frame"></iframe>
+  </div>
+
+  <script>
+    const staff = [
+      {name:"井上智子",yomi:"いのうえともこ",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglf2i23lqjzq0k7hh5r9xf/sign-in"},
+      {name:"成相学",yomi:"なりあいまなぶ",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglf3r13lqnzq0kaxomr2y9/sign-in"},
+      {name:"井上宏一",yomi:"いのうえこういち",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglf4v13lqrzq0kqunx4ph4/sign-in"},
+      {name:"山田順子",yomi:"やまだじゅんこ",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglf5g13lqtzq0k67e7sh1a/sign-in"},
+      {name:"兒玉貴文",yomi:"こだまたかふみ",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglf5yv3lqvzq0kg0in1gnn/sign-in"},
+      {name:"森一浩",yomi:"もりかずひろ",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglf6ki3lqxzq0kc43is14z/sign-in"},
+      {name:"岡本マリ子",yomi:"おかもとまりこ",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglf7nj3lr1zq0kxncxu73a/sign-in"},
+      {name:"エイエイアウン",yomi:"えいえいあうん",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglf88m3lr3zq0k7opeecdr/sign-in"},
+      {name:"末廣千鶴",yomi:"すえひろちづる",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglf8rf3lr5zq0k9r6pez3m/sign-in"},
+      {name:"永田誠",yomi:"ながたまこと",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglf9c63lr7zq0k64yx8p2n/sign-in"},
+      {name:"吉冨めぐみ",yomi:"よしとみめぐみ",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglf9v23lr9zq0kmpiny3x2/sign-in"},
+      {name:"蛯原克也",yomi:"えびはらかつや",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglfadv3lrbzq0k3uc43b2z/sign-in"},
+      {name:"江口文乃",yomi:"えぐちあやの",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglfax03lrdzq0kqyn4j7wo/sign-in"},
+      {name:"ススティ",yomi:"すすてぃ",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglfbeo3lrfzq0kiloy9860/sign-in"},
+      {name:"末廣直也",yomi:"すえひろなおや",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglfbwd3lrhzq0kjlct1jwk/sign-in"},
+      {name:"長友和彦",yomi:"ながともかずひこ",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglfcgl3lrnzq0kp19bzpen/sign-in"},
+      {name:"永谷十志子",yomi:"ながたにとしこ",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglfd1d3lrpzq0kmqplfawe/sign-in"},
+      {name:"河野麻由美",yomi:"かわのまゆみ",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglfdiy3lrrzq0k7pphcibw/sign-in"},
+      {name:"トンナディルイン",yomi:"とんなでぃるいん",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglfe0h3lrtzq0ksyjlimn1/sign-in"},
+      {name:"松山奈津子",yomi:"まつやまなつこ",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglfejl3lrvzq0k2axa43d6/sign-in"},
+      {name:"上原祐子",yomi:"うえはらゆうこ",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglff3u3lrxzq0k07jj74ia/sign-in"},
+      {name:"井原祐助",yomi:"いはらゆうすけ",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglffnk3lrzzq0kr47fpns4/sign-in"},
+      {name:"ユモンチョウ",yomi:"ゆもんちょう",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglfg4x3ls1zq0kz9hsr6n0/sign-in"},
+      {name:"キンソウソウチョウ",yomi:"きんそうそうちょう",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglfgmq3ls3zq0kyexf221m/sign-in"},
+      {name:"谷口美保子",yomi:"たにぐちみほこ",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglfh2s3ls5zq0kj20zqoai/sign-in"},
+      {name:"橋迫海斗",yomi:"はしさこかいと",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglfhja3ls7zq0k0yu956av/sign-in"},
+      {name:"青木清美",yomi:"あおききよみ",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglfhzq3ls9zq0k2rcfqh05/sign-in"},
+      {name:"秋丸未来",yomi:"あきまるみく",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglfifm3lsbzq0kxnu3wm5c/sign-in"},
+      {name:"デジンカイン",yomi:"でじんかいん",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglfiy33lsdzq0kvvu2tizs/sign-in"}
+    ];
+
+    // あいうえお順（よみでソート）
+    staff.sort((a,b)=>a.yomi.localeCompare(b.yomi,"ja"));
+
+    const list = document.getElementById("list");
+    const frame = document.getElementById("frame");
+    const browser = document.getElementById("browser");
+    const search = document.getElementById("search");
+    const openSafariBtn = document.getElementById("openSafari");
+
+    let currentUrl = "";
+
+    function openInAppBrowser(url){
+      currentUrl = url;
+      frame.src = url;
+      browser.style.display = "block";
+    }
+
+    function render(items){
+      list.innerHTML = "";
+      items.forEach(s=>{
+        const btn = document.createElement("button");
+        btn.innerText = s.name;
+        btn.onclick = ()=> openInAppBrowser(s.url);
+        list.appendChild(btn);
+      });
+    }
+
+    render(staff);
+
+    search.addEventListener("input", ()=>{
+      const k = search.value.trim();
+      if(!k){ render(staff); return; }
+      render(staff.filter(s=>s.name.includes(k) || s.yomi.includes(k)));
+    });
+
+    document.getElementById("back").onclick = ()=>{
+      browser.style.display = "none";
+      frame.src = "";
+      currentUrl = "";
+    };
+
+    // iframeが弾かれるサイト対策：Safariで開くボタン
+    openSafariBtn.onclick = ()=>{
+      if(currentUrl) window.location.href = currentUrl;
+    };
+  </script>
+</body>
+</html>
