@@ -1,8 +1,9 @@
 {
-"name": "職員ポータル",
+"name": "ハカルト",
 "short_name": "職員",
 "display": "standalone",
 "start_url": "./",
 "background_color": "#f2f2f7",
 "theme_color": "#007AFF"
 }
+
