@@ -75,6 +75,12 @@ background:#005fcc;
 
 <script>
 
+const last = localStorage.getItem("lastPage");
+
+if(last){
+window.location.href = last;
+}
+  
 const staff = [
 
 {name:"井上智子",yomi:"いのうえともこ",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglf2i23lqjzq0k7hh5r9xf/sign-in"},
@@ -125,6 +131,7 @@ btn.innerText=s.name;
 
 btn.onclick=()=>{
 
+localStorage.setItem("lastPage", s.url);
 window.location.href=s.url;
 
 };
@@ -149,4 +156,5 @@ render(staff.filter(s=>s.name.includes(k)||s.yomi.includes(k)));
 
 </body>
 </html>
+
 
