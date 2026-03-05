@@ -125,7 +125,6 @@ btn.innerText=s.name;
 
 btn.onclick=()=>{
 
-localStorage.setItem("lastPage", s.url);
 window.location.href=s.url;
 
 };
@@ -150,6 +149,7 @@ render(staff.filter(s=>s.name.includes(k)||s.yomi.includes(k)));
 
 </body>
 </html>
+
 
 
 
