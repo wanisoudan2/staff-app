@@ -9,10 +9,14 @@
 <title>ハカルト</title>
 
 <link rel="manifest" href="manifest.json">
+
 <meta name="theme-color" content="#007AFF">
 
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="ハカルト">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+<link rel="apple-touch-icon" sizes="180x180" href="/staff-app/icon.png">
 
 <style>
 
@@ -132,7 +136,7 @@ list.innerHTML="";
 data.forEach(s=>{
 const btn=document.createElement("button");
 btn.innerText=s.name;
-btn.onclick=()=>{ window.location.href=s.url };
+btn.onclick=()=>{window.location.href=s.url};
 list.appendChild(btn);
 });
 }
@@ -148,4 +152,3 @@ render(staff.filter(s=>s.name.includes(k)||s.yomi.includes(k)));
 
 </body>
 </html>
-
