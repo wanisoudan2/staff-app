@@ -75,8 +75,6 @@ margin-bottom:10px;
 
 <header>ハカルト</header>
 
-<button id="backBtn" onclick="goHome()">一覧へ戻る</button>
-
 <div id="main">
 
 <input id="search" placeholder="名前検索">
@@ -87,12 +85,6 @@ margin-bottom:10px;
 
 <script>
 
-const last = localStorage.getItem("lastPage");
-
-if(last){
-window.location.href = last;
-}
-  
 const staff = [
 
 {name:"井上智子",yomi:"いのうえともこ",url:"https://hakaruto.jp/companies/Company:cmlglf1o43lqfzq0kbbej3fqa/staffs/Staff:cmlglf2i23lqjzq0k7hh5r9xf/sign-in"},
@@ -164,17 +156,11 @@ render(staff.filter(s=>s.name.includes(k)||s.yomi.includes(k)));
 
 });
 
-function goHome(){
-
-localStorage.removeItem("lastPage");
-location.reload();
-
-}
-
 </script>
 
 </body>
 </html>
+
 
 
 
