@@ -57,6 +57,16 @@ button:active{
 background:#005fcc;
 }
 
+#backBtn{
+width:100%;
+padding:10px;
+border:none;
+background:#666;
+color:white;
+font-size:14px;
+margin-bottom:10px;
+}
+
 </style>
 
 </head>
@@ -64,6 +74,8 @@ background:#005fcc;
 <body>
 
 <header>ハカルト</header>
+
+<button id="backBtn" onclick="goHome()">一覧へ戻る</button>
 
 <div id="main">
 
@@ -152,9 +164,17 @@ render(staff.filter(s=>s.name.includes(k)||s.yomi.includes(k)));
 
 });
 
+function goHome(){
+
+localStorage.removeItem("lastPage");
+location.reload();
+
+}
+
 </script>
 
 </body>
 </html>
+
 
 
